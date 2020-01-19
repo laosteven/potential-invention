@@ -28,6 +28,7 @@ block_blob_service = BlockBlobService(
 )
 
 blob_url_template = "https://meganoni.blob.core.windows.net/test/%s"
+plate_blob_url_template = "https://meganoni.blob.core.windows.net/plaque/%s"
 
 FLASK_DEBUG = os.environ.get('FLASK_DEBUG', True)
 SUPPORTED_EXTENSIONS = ('.png', '.jpg', '.jpeg')
@@ -224,50 +225,11 @@ def init_get_money_4():
         plate_num = msg_json['LicensePlate']
         print("PLATE NUMBER :" + plate_num)
 
-        fuzzy_plate_nums = generate_fuzzy_list(plate_num)
-
-        for fuzzy_plate_num in fuzzy_plate_nums:
-            print("FUZZY PLATE: " + fuzzy_plate_num)
-            if fuzzy_plate_num in wanted_plates:
-                msg_json['LicensePlate'] = fuzzy_plate_num
-                request_url = "https://licenseplatevalidator.azurewebsites.net/api/lpr/platelocation"
-                username = "equipe13"
-                password = "RTFragcan38P5h8j"
-                img_context = msg_json.pop("ContextImageJpg")
-                blob_name = plate_num + ".jpg"
-                block_blob_service.create_blob_from_bytes(container_name, blob_name, base64.decodestring(img_context))
-
-                blob_url = blob_url_template % blob_name
-
-                msg_json['ContextImageReference'] = blob_url
-                req_json = json.dumps(msg_json)
-                resp = requests.post( request_url, data=req_json, auth=(username, password) )
-                json_file.close()
-                return Response(
-                    req_json,
-                    status=resp.status_code
-                )
-
-
-@app.route( "/initGetMoney4", methods=['GET'] )
-def init_get_money_4():
-    with open( 'daily_wanted.txt' ) as json_file:
-        data = json.load( json_file )
-        wanted_plates = data['plates']
-
-    while True:
-        msg = bus_service.receive_subscription_message( 'licenseplateread', 'eG4y7VYFse8NvW53', peek_lock=False )
-
-        msg_json = json.loads( msg.body )
-
-        plate_num = msg_json['LicensePlate']
-        print("PLATE NUMBER :" + plate_num)
-
         img_plate = msg_json.pop("LicensePlateImageJpg")
         blob_name = plate_num + ".jpg"
         block_blob_service.create_blob_from_bytes(plate_container_name, blob_name, base64.decodestring( img_plate ) )
 
-        plate_blob_url = blob_url_template % blob_name
+        plate_blob_url = plate_blob_url_template % blob_name
 
         fuzzy_plate_nums = generate_fuzzy_list(plate_num)
 
