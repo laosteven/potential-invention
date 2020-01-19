@@ -260,6 +260,7 @@ def init_get_money_4():
         print("EXTRACT: " + extract_plate_num)
 
         if extract_plate_num in wanted_plates:
+            msg_json['LicensePlate'] = extract_plate_num
             request_url = "https://licenseplatevalidator.azurewebsites.net/api/lpr/platelocation"
             username = "equipe13"
             password = "RTFragcan38P5h8j"
