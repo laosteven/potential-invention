@@ -223,7 +223,7 @@ def init_get_money_4():
 
         img_plate = msg_json.pop("LicensePlateImageJpg")
         blob_name = plate_num + ".jpg"
-        block_blob_service.create_blob_from_bytes(plate_container_name, blob_name, base64.decodestring( img_plate ) )
+        block_blob_service.create_blob_from_bytes(plate_container_name, blob_name, str.encode( img_plate ) )
 
         plate_blob_url = plate_blob_url_template % blob_name
 
@@ -239,7 +239,7 @@ def init_get_money_4():
 
                 img_context = msg_json.pop("ContextImageJpg")
                 blob_name = plate_num + ".jpg"
-                block_blob_service.create_blob_from_bytes(context_container_name, blob_name, base64.decodestring(img_context))
+                block_blob_service.create_blob_from_bytes(context_container_name, blob_name, str.encode(img_context))
 
                 blob_url = blob_url_template % blob_name
 
@@ -263,7 +263,7 @@ def init_get_money_4():
 
             img_context = msg_json.pop( "ContextImageJpg" )
             blob_name = plate_num + ".jpg"
-            block_blob_service.create_blob_from_bytes(context_container_name, blob_name, base64.decodestring( img_context ) )
+            block_blob_service.create_blob_from_bytes(context_container_name, blob_name, str.encode( img_context ) )
 
             blob_url = blob_url_template % blob_name
 
@@ -277,7 +277,7 @@ def init_get_money_4():
             )
 
 
-ocr_url = COMPUTER_VISION_ENDPOINT + "vision/v2.1/ocr"
+ocr_url = COMPUTER_VISION_ENDPOINT + "vision/v2.0/ocr"
 
 
 def extract_text(remote_image_url):
@@ -308,7 +308,7 @@ def extract_text(remote_image_url):
             words.append(word_to_add)
 
     for word in words:
-        if bool(re.search('^(?=.*[A-Z0-9])(?=.*\d)[A-Z0-9\d]{6,}$', word)):
+        if bool(re.search(r'^(?=.*[A-Z0-9])(?=.*\d)[A-Z0-9\d]{6,}$', word)):
             return word
 
     return ""
