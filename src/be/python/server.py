@@ -285,6 +285,9 @@ ocr_url = COMPUTER_VISION_ENDPOINT + "vision/v2.1/ocr"
 
 
 def extract_text(remote_image_url):
+    img = requests.get(remote_image_url)
+    if img.headers.get("content-length") < 2000:
+        return ""
     headers = {'Ocp-Apim-Subscription-Key': COMPUTER_VISION_SUBSCRIPTION_KEY}
     params = {'language': 'en', 'detectOrientation': 'true'}
     data = {'url': remote_image_url}
