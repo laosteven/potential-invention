@@ -277,7 +277,8 @@ def init_get_money_4():
             )
 
 
-ocr_url = COMPUTER_VISION_ENDPOINT + "vision/v2.0/ocr"
+recognize_url = COMPUTER_VISION_ENDPOINT + "vision/v2.0/recognizeText"
+text_operations_url = COMPUTER_VISION_ENDPOINT + "vision/v2.0/textOperations"
 
 
 def extract_text(remote_image_url):
@@ -288,15 +289,25 @@ def extract_text(remote_image_url):
         return ""
 
     headers = {'Ocp-Apim-Subscription-Key': COMPUTER_VISION_SUBSCRIPTION_KEY}
-    params = {'language': 'unk', 'detectOrientation': 'true'}
+    params = {'mode': 'Printed'}
     data = {'url': remote_image_url}
 
     print(remote_image_url)
-    response = requests.post( ocr_url, headers=headers, params=params, json=data )
+    response = requests.post( recognize_url, headers=headers, params=params, json=data )
 
     response.raise_for_status()
 
     analysis = response.json()
+    print(response)
+    print(analysis)
+
+    operation_location = analysis["Operation-Location"]
+    img_id = operation_location.split('/')[-1]
+
+    params_text_ops = {'operationId': img_id}
+    response_text_ops = requests.post(
+        text_operations_url, headers=headers, params=params_text_ops, json=data)
+
     # Extract the word bounding boxes and text.
     line_infos = [region["lines"] for region in analysis["regions"]]
     words = list()
@@ -328,7 +339,7 @@ def test():
     data = {'url': remote_image_url}
 
     print(remote_image_url)
-    response = requests.post( ocr_url, headers=headers, params=params, json=data )
+    response = requests.post( recognize_url, headers=headers, params=params, json=data )
 
     response.raise_for_status()
 
