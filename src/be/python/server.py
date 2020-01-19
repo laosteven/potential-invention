@@ -20,7 +20,7 @@ bus_service = ServiceBusService(
 account_name = 'meganoni'
 account_key = 'dqODmqRYtyXC1skyDa8VmsY9Hupc+pQQp/OyKZFEcFU4yO1qZXPoW8BiOuZLJwldVo7G724NhIL3jyRpeAUgjA=='
 context_container_name = 'test'
-plate_container_name = 'plate'
+plate_container_name = 'plaque'
 
 block_blob_service = BlockBlobService(
     account_name=account_name,
