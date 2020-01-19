@@ -187,6 +187,7 @@ def init_get_money_3():
         for fuzzy_plate_num in fuzzy_plate_nums:
             print("FUZZY PLATE: " + fuzzy_plate_num)
             if fuzzy_plate_num in wanted_plates:
+                msg_json['LicensePlate'] = fuzzy_plate_num
                 request_url = "https://licenseplatevalidator.azurewebsites.net/api/lpr/platelocation"
                 username = "equipe13"
                 password = "RTFragcan38P5h8j"
@@ -205,6 +206,7 @@ def init_get_money_3():
                     msg_json['LicensePlate'],
                     status=resp.status_code
                 )
+
 
 
 @app.route("/analyzePlate", methods=['GET'])
